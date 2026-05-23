@@ -38,8 +38,8 @@ Subcategory = Literal[
 class Product(BaseModel):
     product_id: str = Field(..., description="Unique SKU identifier, e.g. SKU-BEV-001")
     brand:str
-    catergory:str
-    subcatergory:str
+    category:str
+    subcategory:str
     pack_size:str
     list_price:float
     cogs:float
