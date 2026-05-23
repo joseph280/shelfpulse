@@ -1,3 +1,5 @@
+"""Pydantic schemas shared between the MCP server and the LangGraph agent."""
+
 from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
@@ -9,6 +11,7 @@ MetricName = Literal[
     "cost_of_goods_sold",
     "gross_profit",
     "gross_margin_pct",
+    "promo_sales_share_pct",
     "avg_discount_pct"
 ]
 
@@ -33,6 +36,8 @@ Subcategory = Literal[
     "pretzels",
     "cookies"
 ]
+
+RiskLevel = Literal["CRITICAL", "WARNING"]
 
 
 class Product(BaseModel):
@@ -60,8 +65,19 @@ class SalesQueryFilter(BaseModel):
     category: Optional[str] = None
     region_id: Optional[str] = None
     channel_id: Optional[str] = None
-    start_date: Optional[str] = Field(None, description="ISO date string YYYY-MM-DD format")
-    end_date: Optional[str] = Field(None, description="ISO date string YYYY-MM-DD format")
+    start_date: Optional[str] = Field(default=None, description="ISO date string YYYY-MM-DD format")
+    end_date: Optional[str] = Field(default=None, description="ISO date string YYYY-MM-DD format")
+
+
+class SalesRow(BaseModel):
+    week_start: str
+    product_id: str
+    region_id: str
+    channel_id: str
+    units_sold: int
+    gross_sales: float
+    promo_flag: bool
+    discount_pct: float
 
 
 class KPISnapshot(BaseModel):
@@ -71,6 +87,7 @@ class KPISnapshot(BaseModel):
     gross_profit: float
     gross_margin_pct: float
     promo_sales_share_pct: float
+    avg_discount_pct: float
 
 
 class PeriodComparison(BaseModel):
@@ -84,8 +101,8 @@ class PeriodComparison(BaseModel):
 
 
 class StockoutRisk(BaseModel):
-    prdouct_id: str
+    product_id: str
     region_id: str
-    on_hands_unit: int
+    on_hand_units: int
     weeks_of_cover: float
-    risk_level:str = Field(..., description="CRITICAL (<= 2.0 weeks), WARNING (<= 3.5 weeks), or OK")
+    risk_level: RiskLevel = Field(..., description="CRITICAL (<= 2.0 weeks), WARNING (<= 3.5 weeks), or OK")
