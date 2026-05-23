@@ -1,0 +1,25 @@
+[project]
+name = "shelfpulse"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "arize-phoenix>=16.0.0",
+    "duckdb>=1.5.3",
+    "fastapi>=0.136.1",
+    "fastmcp>=3.3.1",
+    "langchain-anthropic>=1.4.3",
+    "langgraph>=1.2.1",
+    "mcp>=1.27.1",
+    "pydantic>=2",
+    "rich>=15.0.0",
+    "typer>=0.25.1",
+    "uvicorn>=0.47.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "ruff>=0.15.14",
+]

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Env
+.env
+
+# DuckDB warehouse (rebuilt by seed.py)
+warehouse/*.duckdb
+warehouse/*.duckdb.wal
+
+# Mac
+.DS_Store
+
+# Node (for the optional Next.js UI)
+node_modules/
+.next/
+
+# IDE
+.vscode/*
+!.vscode/settings.json
