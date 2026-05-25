@@ -71,8 +71,6 @@ def test_query_sales_respects_date_range():
 # compute_kpi
 def test_compute_kpi_basic_invariants():
     snap = compute_kpi(SalesQueryFilter(category="beverage"))
-    print(snap)   # ← add this
-
     assert snap.units_sold > 0
     assert snap.gross_sales > 0
     assert snap.gross_profit == pytest.approx(

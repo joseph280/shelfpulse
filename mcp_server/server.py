@@ -122,7 +122,7 @@ def list_channels() -> list[Channel]:
 
 
 @mcp.tool
-def query_sales(filter: SalesQueryFilter, limit: int = 100) -> list[SalesRow]:
+def query_sales(filter: SalesQueryFilter, limit: int = 1000) -> list[SalesRow]:
     """Return raw weekly_sales rows matching the filter.
 
     Requires at least one filter constraint to avoid pulling the full
@@ -202,9 +202,6 @@ def compute_kpi(filter: SalesQueryFilter) -> KPISnapshot:
     profit = gross - cogs
     margin_pct = (profit / gross * 100.0) if gross > 0 else 0.0
     promo_share = (promo / gross * 100.0) if gross > 0 else 0.0
-
-    print(f"row tuple: {row}")
-
 
     return KPISnapshot(
         units_sold=units,
