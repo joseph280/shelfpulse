@@ -41,7 +41,7 @@ class ToolPlan(BaseModel):
     """Ordered sequence of tool calls produced by the planner."""
 
     calls: list[ToolCall] = Field(min_length=1, max_length=8)
-    resoning: str | None = None
+    reasoning: str | None = None
 
 
 # LangGraph state

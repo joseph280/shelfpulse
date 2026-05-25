@@ -133,6 +133,7 @@ def query_sales(filter: SalesQueryFilter, limit: int = 1000) -> list[SalesRow]:
         [
             filter.product_id,
             filter.category,
+            filter.subcategory,
             filter.region_id,
             filter.channel_id,
             filter.start_date,

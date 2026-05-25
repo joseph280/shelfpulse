@@ -63,6 +63,7 @@ class Channel(BaseModel):
 class SalesQueryFilter(BaseModel):
     product_id: Optional[str] = None
     category: Optional[str] = None
+    subcategory: Optional[str] = None
     region_id: Optional[str] = None
     channel_id: Optional[str] = None
     start_date: Optional[str] = Field(default=None, description="ISO date string YYYY-MM-DD format")
