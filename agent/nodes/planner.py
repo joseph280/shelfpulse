@@ -20,7 +20,8 @@ def planner(state: AgentState) -> dict:
     """Return {'plan': ToolPlan, 'retry_count': n}."""
     question = state.get("question", "")
     decision = state.get("router_decision")
-    assert decision is not None, "planner called without router_decision"
+    if decision is  None: 
+        raise RuntimeError("planner called without router_decision")
     retry_count = state.get("retry_count", 0)
     feedback = "\n".join(state.get("errors", []))
 

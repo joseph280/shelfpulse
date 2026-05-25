@@ -201,7 +201,8 @@ def seed_database() -> None:
 
     sales_row = conn.execute("SELECT COUNT(*) FROM weekly_sales;").fetchone()
     inv_row = conn.execute("SELECT COUNT(*) FROM inventory_snapshots;").fetchone()
-    assert sales_row is not None and inv_row is not None  # COUNT(*) always returns one row
+    if sales_row is None or inv_row is  None:
+        raise RuntimeError("Failed to verify row counts after seeding database.")
     total_sales = sales_row[0]
     total_inv = inv_row[0]
     conn.close()
