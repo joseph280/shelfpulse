@@ -35,7 +35,7 @@ class Evidence(BaseModel):
     tolerance. Mismatches kick state back to the planner.
     """
     id: str = Field(pattern=r"^ev-\d+$", description="Unique evidence ID tag, e.g., ev-1")
-    metric: MetricName
+    metric: str
     value: float
     period: str = Field(min_length=2, max_length=32) # matches Period.label
     filter: Dict[str,str] = Field(description="Flat key/value filter, e.g. {'region_id': 'NE', 'category': 'beverage'}")

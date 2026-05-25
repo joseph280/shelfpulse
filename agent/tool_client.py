@@ -1,16 +1,24 @@
 """agent/tool_client.py - MCP client wrapper for the LangGraph agent.
-Loads the 6 tools exposed by the ShelfPulse FastMCP server and converts
-them into LangChain Tool objects ready to be bound to the LLM.
-The MCP server must be running on http://127.0.0.1:8001 before any node
-that uses these tools is invoked. Start it with:
-uv run python -m mcp_server.server
+
+Loads the 7 tools exposed by the ShelfPulse FastMCP server and converts
+them into LangChain BaseTool objects ready to be bound to the LLM.
+Also exposes `unwrap_result()` for parsing MCP content-block responses
+into plain Python objects.
+
+The MCP server must be running on http://127.0.0.1:8001 (or the host/
+port set via MCP_HOST / MCP_PORT) before any node that uses these
+tools is invoked. Start it with:
+
+    uv run python -m mcp_server.server
 """
 
 from __future__ import annotations
 
+import json
 import os
 
 from functools import lru_cache
+from typing import Any
 from langchain_core.tools import BaseTool
 
 from langchain_mcp_adapters.client import MultiServerMCPClient
@@ -40,3 +48,15 @@ async def load_mcp_tools() -> list[BaseTool]:
     once at graph build time and bind the result to the LLM.
     """
     return await _client().get_tools()
+
+
+def unwrap_result(raw: Any) -> Any:
+    """Unwrap MCP content-block lists into plain Python objects."""
+    if (
+        isinstance(raw, list)
+        and raw
+        and isinstance(raw[0], dict)
+        and raw[0].get("type") == "text"
+    ):
+        return json.loads(raw[0]["text"])
+    return raw
