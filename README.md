@@ -167,24 +167,6 @@ shelfpulse/
 └── docs/                  # Phoenix screenshots
 ```
 
-## How this maps to the role requirements
-
-| Requirement | Implementation |
-|---|---|
-| Python | Python 3.12 throughout, `uv` dependency management |
-| FastAPI | `/ask`, `/insights/{id}`, `/actions/{id}`, `/healthz` with Pydantic I/O |
-| LangGraph | 7-node graph with conditional edges and async tool execution |
-| LLM agents with tool calling | Anthropic with `with_structured_output` at every node; tools loaded from FastMCP |
-| Structured LLM outputs | Pydantic v2 models enforced at every node |
-| Guardrails | Input scope router, output schema validation, PII and harmful intent regex, refusal templates |
-| SQL plus data engineering | DuckDB warehouse, window functions for promo lift, period-over-period CTEs |
-| DuckDB | Local file warehouse served by an MCP tool |
-| Agent-driven development | Graph-first design, deterministic edges, replayable state |
-| MCP | FastMCP server exposing 7 tools; the agent consumes the MCP server, not inline functions |
-| Arize observability | Phoenix tracing, OpenInference instrumentation, per-node spans |
-| Retail / CPG analytics | Synthetic data plus KPIs (velocity, days of cover, promo lift, GP%) mirroring real industry patterns |
-| KPI / insight / action pipelines | Core graph nodes; this is the project |
-
 ## Design choices worth calling out
 
 **The validator is the differentiator.** Most LLM agents catch hallucination after the fact. ShelfPulse makes it structurally impossible: every aggregate number cited in an insight must come from a typed `Evidence` row produced by a real tool call. The validator builds that evidence list before the insight LLM runs.
