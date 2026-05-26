@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import cast
+import uuid
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
@@ -104,4 +105,5 @@ def insight_builder(state: AgentState) -> dict:
             ]
         )
     )
+    insight.id = f"ins-{uuid.uuid4().hex[:8]}" 
     return {"insight": insight}

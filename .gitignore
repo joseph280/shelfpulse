@@ -12,14 +12,20 @@ __pycache__/
 # DuckDB warehouse (rebuilt by seed.py)
 warehouse/*.duckdb
 warehouse/*.duckdb.wal
+warehouse/*.sqlite
+warehouse/*.sqlite-journal
+
+# Phoenix local data
+.phoenix/
 
 # Mac
 .DS_Store
 
-# Node (for the optional Next.js UI)
+# Node
 node_modules/
 .next/
 
 # IDE
 .vscode/*
 !.vscode/settings.json
+.idea/

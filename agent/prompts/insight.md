@@ -19,7 +19,6 @@ a CPG category manager.
 
 You must produce an Insight object with these fields:
 
-- id: a short identifier like "ins-1"
 - title: one sentence, max 12 words, no numbers
 - summary: 3 to 5 sentences of prose
 - evidence: copy the Evidence rows you cited, in order of first citation
@@ -75,3 +74,9 @@ Correct output:
 Write for a busy category manager, not a researcher. Active voice,
 short sentences, no hedging language like "it appears that" or
 "the data suggests". State what the numbers show.
+
+## Do not produce these fields
+
+The system generates the following fields automatically. Do NOT
+include them in your output, even if the schema lists them:
+- id

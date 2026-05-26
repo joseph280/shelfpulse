@@ -18,6 +18,7 @@ from fastapi.responses import JSONResponse
 
 from agent.graph import build_graph
 from agent.guardrails import check_input
+from agent.observability import setup_phoenix
 from api.schemas import AskRequest, AskResponse, RefusalResponse
 from api.storage import get_action_plan, get_insight
 from mcp_server.config import settings
@@ -27,7 +28,10 @@ log = logging.getLogger("shelfpulse.api")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Build the graph once at startup so the first /ask is fast."""
+    """Boot Phoenix and the graph once at startup."""
+    log.info("Starting Phoenix...")
+    app.state.phoenix = setup_phoenix()
+    
     log.info("Building ShelfPulse agent graph...")
     app.state.graph = build_graph()
     log.info("Graph compiled.")
