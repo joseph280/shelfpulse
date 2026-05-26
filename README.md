@@ -5,20 +5,19 @@ A LangGraph-powered CPG sales-insight agent. Plain-English questions in, structu
 ```mermaid
 flowchart TD
     A["POST /ask"] --> B[Guardrails]
+    B -->|PII / harmful / oversized| R[AskResponse Refusal]
     B -->|pass| C[Router]
-    B -->|PII / harmful / oversized| Z[Refusal]
     C -->|in scope| D[Planner]
-    C -->|out of scope| Z
+    C -->|out of scope| I[Finalizer]
     D --> E[Tool Executor]
     E -->|MCP HTTP| M[("FastMCP Server<br/>7 tools<br/>DuckDB warehouse")]
     M --> E
     E --> F[Validator]
     F --> G[Insight Builder]
     G --> H[Action Planner]
-    H --> I[Finalizer]
+    H --> I
     I --> S[(SQLite run history)]
-    I --> R[AskResponse]
-    Z --> R
+    I --> R
 
     style B fill:#fff8dc,stroke:#c8a100
     style C fill:#e0f0ff,stroke:#3a7fd5
