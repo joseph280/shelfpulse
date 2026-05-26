@@ -9,7 +9,7 @@ MCP tool surface is what makes claim verification mechanical.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -113,7 +113,7 @@ class ActionPlan(BaseModel):
         pattern=r"^ap-[a-zA-Z0-9_-]+$",
     )
     actions: List[Action] = Field(min_length=3, max_length=5)
-    generated_at: datetime = Field(default_factory=datetime.now)
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     @model_validator(mode="after")
     def _check_ranks(self) -> "ActionPlan":

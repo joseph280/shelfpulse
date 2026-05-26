@@ -61,4 +61,5 @@ class AgentState(TypedDict, total=False):
     started_at: datetime
     finished_at: datetime
     low_confidence: bool
+    trace_id: str
 
