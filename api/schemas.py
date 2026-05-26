@@ -63,8 +63,8 @@ class Insight(BaseModel):
         max_length=1500,
         description="3 to 5 sentence synthesis where every numeric claim references an evidence id",
     )
-    evidence: List[Evidence] = Field(min_length=1, max_length=10)
-    confidence: float = Field(..., ge=0.0, le=1.0)
+    evidence: List[Evidence] = Field(default_factory=list, max_length=10)
+    confidence: float = Field(default=0.7, ge=0.0, le=1.0)
 
     @model_validator(mode="after")
     def _check_unique_evidence_ids(self) -> "Insight":
@@ -88,7 +88,7 @@ class Action(BaseModel):
     description: str = Field(min_length=15, max_length=500)
     expected_impact_low_usd: float
     expected_impact_high_usd: float
-    confidence: float = Field(..., ge=0.0, le=1.0)
+    confidence: float = Field(default=0.7, ge=0.0, le=1.0)
     owner_role: OwnerRole
     evidence_refs: List[str] = Field(
         min_length=1,
