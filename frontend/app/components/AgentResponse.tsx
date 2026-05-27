@@ -68,9 +68,13 @@ return (
         </div>
 
         {/* Trace ID */}
-        <p className="text-[10px] text-muted font-mono pt-2 border-t border-default">
-          trace_id: {trace_id}
-        </p>
+        <a  href="http://localhost:6006/projects"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-[10px] text-muted font-mono pt-2 border-t border-default hover:text-accent transition-colors"
+        >
+            trace_id: {trace_id} · view in Phoenix →
+        </a>
       </div>
     </div>
   );

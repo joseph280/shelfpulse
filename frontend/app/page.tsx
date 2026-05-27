@@ -4,6 +4,7 @@ import { useState } from "react";
 import { askShelfPulse, ApiError } from "@/lib/api";
 import { ChatMessage, ChatThread } from "./components/ChatThread";
 import { ChatInput } from "./components/ChatInput";
+import { Watermark } from "./components/Watermark";
 
 
 export default function Home() {
@@ -48,7 +49,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col h-screen max-w-5xl mx-auto">
+    <main className="flex flex-col h-screen w-full">
       <header className="border-b border-default bg-white px-6 py-3 flex items-center justify-between">
         <div>
           <h1 className="text-base font-semibold text-accent">ShelfPulse</h1>
@@ -66,6 +67,7 @@ export default function Home() {
 
       <ChatThread messages={messages} />
       <ChatInput onSubmit={handleSubmit} disabled={busy} />
+      <Watermark />
     </main>
   );
 }

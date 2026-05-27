@@ -21,9 +21,13 @@ export function RefusalCard({ refusal }: RefusalCardProps) {
           </span>
         </div>
         <p className="text-sm leading-relaxed">{refusal.message}</p>
-        <p className="text-[10px] text-muted font-mono mt-3 pt-2 border-t border-yellow-300">
-          trace_id: {refusal.trace_id}
-        </p>
+        <a  href="http://localhost:6006/projects"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-[10px] text-muted font-mono mt-3 pt-2 border-t border-yellow-300 hover:text-yellow-900 transition-colors"
+        >
+            trace_id: {refusal.trace_id} · view in Phoenix →
+        </a>
       </div>
     </div>
   );
