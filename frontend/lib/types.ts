@@ -66,7 +66,7 @@ export interface AskRequest {
 
 export interface AskResponse {
     trace_id: string;
-    insights: Insight[];
+    insight: Insight;
     action_plan: ActionPlan;
     low_confidence: boolean;
 }

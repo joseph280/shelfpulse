@@ -1,26 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: 250 250 250;
+  --foreground: 23 23 23;
+  --accent: 11 61 46;
+  --accent-light: 26 77 58;
+  --user-bubble: 11 61 46;
+  --agent-card: 255 255 255;
+  --refusal-bg: 255 248 220;
+  --refusal-border: 200 161 0;
+  --muted: 115 115 115;
+  --border: 229 229 229;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
+
+/* Tailwind-style utilities exposed as CSS classes */
+.text-accent { color: rgb(var(--accent)); }
+.bg-accent { background: rgb(var(--accent)); }
+.text-muted { color: rgb(var(--muted)); }
+.border-default { border-color: rgb(var(--border)); }
+.bg-user-bubble { background: rgb(var(--user-bubble)); color: white; }
+.bg-agent-card { background: rgb(var(--agent-card)); }
+.bg-refusal { background: rgb(var(--refusal-bg)); }
+.border-refusal { border-color: rgb(var(--refusal-border)); }
+
+/* Subtle pulse for the loading state */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1.0; }
+}
+.animate-pulse-subtle { animation: pulse-subtle 2s ease-in-out infinite; }
