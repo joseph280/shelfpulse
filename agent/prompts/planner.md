@@ -28,7 +28,7 @@ Categories: `beverage`, `snack`, `energy`. Never plural, never capitalized.
 Subcategories: `cola`, `sparkling`, `juice`, `water`, `energy_drink`,
 `chips`, `bars`, `pretzels`, `cookies`.
 Regions: `NE`, `MA`, `ENC`, `WNC`, `SA`, `ESC`, `WSC`, `MTN`, `PAC`,
-`NEW`, `PNW`, `SW`.
+`CAN`, `MEX`, `EUR`.
 Channels: `GRO`, `CST`, `CLU`, `ONL`.
 
 ## Resolving relative time

@@ -25,7 +25,7 @@ def planner(state: AgentState) -> dict:
     retry_count = state.get("retry_count", 0)
     feedback = "\n".join(state.get("errors", []))
 
-    today = date.today().isoformat()
+    today = "2026-05-18"
 
     user_msg = (
         f"Today is {today}.\n"

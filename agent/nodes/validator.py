@@ -141,7 +141,26 @@ def validator(state: AgentState) -> dict:
                             source_tool="compare_periods"
                 )
             )
-
+        elif call.tool_name == "detect_stockout_risk":
+            rows = unwrap_result(raw)
+            if isinstance(rows, list):
+                # Cap at the 10 most critical (lowest weeks_of_cover) so we
+                # stay within Insight.evidence max_length=10.
+                rows = sorted(rows, key=lambda r: r.get("weeks_of_cover", 99))[:10]
+                for row in rows:
+                    evidence.append(Evidence(
+                        id=f"ev-{ev_counter}",
+                        metric="weeks_of_cover",
+                        value=float(row.get("weeks_of_cover", 0)),
+                        period="current",
+                        filter={
+                            "product_id": str(row.get("product_id", "")),
+                            "region_id": str(row.get("region_id", "")),
+                            "risk_level": str(row.get("risk_level", "")),
+                        },
+                        source_tool="detect_stockout_risk",
+                    ))
+                    ev_counter += 1
 
         # query_sales, list_products, list_regions, list_channels,
         # detect_stockout_risk: not aggregate numeric claims, skipped.
