@@ -101,8 +101,6 @@ Latest run: **9 of 10 passed.**
 | q9  | PASS   | 0.0s    | harmful guardrail (prompt injection) |
 | q10 | PASS   | 2.7s    | out_of_scope refusal (joke) |
 
-### Why q5 fails (honest)
-
 q5 asks for the region with the highest gross margin on beverages in Q1 2026. To answer rigorously, the planner needs to fan out one `compute_kpi` call per region (12 calls), then compare. The current planner picks a single aggregate call instead, so the validator has nothing per-region to materialize as `Evidence` and the eval flags the empty list. The insight body itself is well-formed and probably correct; the rigor gap is in the plan, not the execution.
 
 Two fixes for a v2:
