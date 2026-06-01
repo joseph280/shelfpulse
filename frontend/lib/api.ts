@@ -19,6 +19,19 @@ function apiBase(): string {
     return process.env.NEXT_PUBLIC_API_BASE ?? DEFAULT_API_BASE;
 }
 
+/**
+ * Build a link into the Phoenix tracing UI from NEXT_PUBLIC_PHOENIX_URL
+ * (the project URL, e.g. https://app.phoenix.arize.com/projects/<id>).
+ * Deep-links to the specific trace when a phoenix_trace_id is provided.
+ * Returns null when no Phoenix URL is configured (so links are hidden).
+ */
+export function phoenixUrl(traceId?: string | null): string | null {
+    const base = process.env.NEXT_PUBLIC_PHOENIX_URL;
+    if (!base) return null;
+    const clean = base.replace(/\/+$/, "");
+    return traceId ? `${clean}/traces/${traceId}` : clean;
+}
+
 /** The password entered at the gate, persisted for this browser session. */
 function storedPassword(): string {
     if (typeof window === "undefined") return "";

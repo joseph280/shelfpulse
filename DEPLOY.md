@@ -43,10 +43,25 @@ The env vars baked in by `render.yaml`:
 |---|---|---|
 | `SHELFPULSE_PROVIDER` | `anthropic` | LLM backend |
 | `SHELFPULSE_MODEL` | `claude-haiku-4-5` | Cheapest model with reliable structured output |
-| `PHOENIX_DISABLED` | `1` | Don't launch the local tracing UI in prod |
+| `PHOENIX_COLLECTOR_ENDPOINT` | `https://app.phoenix.arize.com` | Stream traces to Phoenix Cloud |
+| `PHOENIX_API_KEY` | *(secret)* | Phoenix Cloud key (see step 1a) |
 | `ANTHROPIC_API_KEY` | *(secret)* | Your key |
 | `APP_PASSWORD` | *(secret)* | Password required to use `/ask` |
 | `ALLOWED_ORIGINS` | *(your Vercel URL)* | CORS allowlist for the frontend |
+
+### 1a. Observability → Phoenix Cloud (optional but recommended)
+
+Traces stream to a hosted Phoenix so you can inspect every request online.
+
+1. Sign up at <https://app.phoenix.arize.com> → **Settings → API Keys** → create a key.
+2. Set `PHOENIX_API_KEY` in Render (above). `PHOENIX_COLLECTOR_ENDPOINT` is already
+   set by `render.yaml`.
+3. Copy your Phoenix **project URL** (open the `shelfpulse` project; the URL looks
+   like `https://app.phoenix.arize.com/projects/<id>`) — you'll give this to Vercel
+   in step 2 as `NEXT_PUBLIC_PHOENIX_URL` so the "view in Phoenix" links work.
+
+> Skip this and tracing is simply off in prod (the app still works; the in-app
+> "view in Phoenix" links just won't render).
 
 > Not using the Blueprint? Create a **Web Service → Docker**, same env vars,
 > health check path `/healthz`.
@@ -63,8 +78,10 @@ no code change — just point it at the Render URL.
 
 1. In Vercel: **Add New → Project**, import this repo.
 2. **Root Directory → `frontend`** (important — the Next.js app lives there).
-3. Add an environment variable:
+3. Add environment variables:
    - `NEXT_PUBLIC_API_BASE` = `https://<your-render-url>` (no trailing slash)
+   - `NEXT_PUBLIC_PHOENIX_URL` = your Phoenix project URL from step 1a (optional;
+     enables the "view in Phoenix" links). Omit it and those links are hidden.
 4. Deploy. You get a URL like `https://shelfpulse.vercel.app`.
 5. Go back to Render and set `ALLOWED_ORIGINS` to that exact Vercel URL, then
    redeploy the backend (or trigger a manual deploy). Now the browser is allowed

@@ -1,4 +1,5 @@
 import type { AskResponse, Action } from "@/lib/types";
+import { phoenixUrl } from "@/lib/api";
 
 interface AgentResponseProps {
     response: AskResponse;
@@ -20,8 +21,9 @@ function formatUsd(n: number): string {
 }
 
 export function AgentResponse({ response }: AgentResponseProps) {
-    const { insight, action_plan, trace_id } = response;
-    
+    const { insight, action_plan, trace_id, phoenix_trace_id } = response;
+    const traceLink = phoenixUrl(phoenix_trace_id);
+
 return (
     <div className="flex justify-start mb-4">
       <div className="max-w-[90%] bg-agent-card border border-default rounded-2xl rounded-tl-md px-5 py-4 shadow-sm space-y-4">
@@ -68,13 +70,19 @@ return (
         </div>
 
         {/* Trace ID */}
-        <a  href="http://localhost:6006/projects"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-[10px] text-muted font-mono pt-2 border-t border-default hover:text-accent transition-colors"
-        >
-            trace_id: {trace_id} · view in Phoenix →
-        </a>
+        {traceLink ? (
+          <a  href={traceLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-[10px] text-muted font-mono pt-2 border-t border-default hover:text-accent transition-colors"
+          >
+              trace_id: {trace_id} · view in Phoenix →
+          </a>
+        ) : (
+          <p className="block text-[10px] text-muted font-mono pt-2 border-t border-default">
+              trace_id: {trace_id}
+          </p>
+        )}
       </div>
     </div>
   );

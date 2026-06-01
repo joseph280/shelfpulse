@@ -13,8 +13,13 @@ services:
         value: anthropic
       - key: SHELFPULSE_MODEL
         value: claude-haiku-4-5   # cheapest model with reliable structured output
+      # Phoenix tracing -> Phoenix Cloud (view traces at a real online URL).
       - key: PHOENIX_DISABLED
-        value: "1"
+        value: ""          # empty = tracing on; set "1" to turn it off
+      - key: PHOENIX_COLLECTOR_ENDPOINT
+        value: https://app.phoenix.arize.com
+      - key: PHOENIX_API_KEY
+        sync: false        # from app.phoenix.arize.com; never commit it
       - key: ANTHROPIC_API_KEY
         sync: false        # set in dashboard; never commit the key
       - key: APP_PASSWORD

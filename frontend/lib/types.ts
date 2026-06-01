@@ -69,12 +69,14 @@ export interface AskResponse {
     insight: Insight;
     action_plan: ActionPlan;
     low_confidence: boolean;
+    phoenix_trace_id?: string | null;
 }
 
 export interface RefusalResponse {
     trace_id: string;
     reason: RefusalReason;
     message: string;
+    phoenix_trace_id?: string | null;
 }
 
 /**

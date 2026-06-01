@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { askShelfPulse, verifyPassword, ApiError } from "@/lib/api";
+import { askShelfPulse, verifyPassword, phoenixUrl, ApiError } from "@/lib/api";
 import { ChatMessage, ChatThread } from "./components/ChatThread";
 import { ChatInput } from "./components/ChatInput";
 import { Watermark } from "./components/Watermark";
@@ -134,14 +134,16 @@ export default function Home() {
           <h1 className="text-base font-semibold text-accent">ShelfPulse</h1>
           <p className="text-xs text-muted">CPG sales-insight agent</p>
         </div>
-        
-          <a href="http://localhost:6006"
+
+        {phoenixUrl() && (
+          <a href={phoenixUrl()!}
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-muted hover:text-accent"
         >
           Open Phoenix →
         </a>
+        )}
       </header>
 
       <ChatThread messages={messages} />
