@@ -1,5 +1,5 @@
 --1. Products Table
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     product_id TEXT PRIMARY KEY,
     brand TEXT NOT NULL,
     category TEXT NOT NULL,
@@ -10,19 +10,19 @@ CREATE TABLE products (
 );
 
 --2. Regions Table
-CREATE TABLE regions (
+CREATE TABLE IF NOT EXISTS regions (
     region_id TEXT PRIMARY KEY,
     region_name TEXT NOT NULL
 );
 
 --3. Channels Table
-CREATE TABLE channels (
+CREATE TABLE IF NOT EXISTS channels (
     channel_id TEXT PRIMARY KEY,
     channel_name TEXT NOT NULL
 );
 
 --4. Weekly Sales Table
-CREATE TABLE weekly_sales (
+CREATE TABLE IF NOT EXISTS weekly_sales (
     week_start DATE NOT NULL,
     product_id TEXT NOT NULL,
     region_id TEXT NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE weekly_sales (
 );
 
 --5. Inventory Snapshot Table
-CREATE TABLE inventory_snapshots (
+CREATE TABLE IF NOT EXISTS inventory_snapshots (
     snapshot_date DATE NOT NULL,
     product_id TEXT NOT NULL,
     region_id TEXT NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE inventory_snapshots (
 );
 
 -- Optimization Index for High-Performance Window Functions & Period-over-Period CTEs
-CREATE INDEX weekly_sales_idx ON weekly_sales (product_id, region_id, channel_id, week_start);
+CREATE INDEX IF NOT EXISTS weekly_sales_idx ON weekly_sales (product_id, region_id, channel_id, week_start);
 
 -- Stockout risk scans the latest snapshot per (product, region)
-CREATE INDEX inventory_snapshots_idx ON inventory_snapshots (snapshot_date, product_id, region_id);
+CREATE INDEX IF NOT EXISTS inventory_snapshots_idx ON inventory_snapshots (snapshot_date, product_id, region_id);

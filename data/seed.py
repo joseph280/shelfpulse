@@ -11,10 +11,12 @@ make the demo questions deterministic:
 
 import random
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import duckdb
 
 DB_PATH = "warehouse/shelfpulse.duckdb"
+SCHEMA_PATH = Path(__file__).parent / "schema.sql"
 SEED = 42
 
 # Category -> allowed subcategories (mirrors Subcategory Literal in mcp_server/models.py)
@@ -33,7 +35,14 @@ PREFIX_BY_CATEGORY: dict[str, str] = {
 
 def seed_database() -> None:
     print("Connecting to DuckDB warehouse...")
+    # Ensure the warehouse directory exists (fresh clone / fresh container).
+    Path(DB_PATH).parent.mkdir(parents=True, exist_ok=True)
     conn = duckdb.connect(DB_PATH)
+
+    # Apply the schema first so seeding works against a brand-new database
+    # (idempotent: schema.sql uses CREATE TABLE/INDEX IF NOT EXISTS).
+    print("Applying schema...")
+    conn.execute(SCHEMA_PATH.read_text())
 
     # Wipe in FK-safe order
     conn.execute("DELETE FROM inventory_snapshots;")
