@@ -147,7 +147,7 @@ The eval is intentionally shallow (surface properties, refusal coverage, lever d
 
 ## Observability
 
-Every request produces an OTEL span tree visible in Arize Phoenix at http://localhost:6006.
+Every request produces an OTEL span tree in Arize Phoenix. Locally, Phoenix runs at http://localhost:6006; the deployed demo streams traces to Phoenix Cloud. The hosted Phoenix is access-controlled, so the screenshots below show what the tracing looks like.
 
 ![Phoenix landing](docs/phoenix_landing.png)
 
@@ -167,7 +167,7 @@ Every request produces an OTEL span tree visible in Arize Phoenix at http://loca
 - Python 3.12 with `uv` for package management
 - FastAPI for the HTTP layer
 - LangGraph for the 7-node agent (router, planner, tool executor, validator, insight builder, action planner, finalizer)
-- Anthropic Claude Sonnet 4.5 via `langchain-anthropic`, with `with_structured_output` at every node
+- Anthropic Claude via `langchain-anthropic`, with `with_structured_output` at every node (provider-swappable to Groq/Gemini; the live demo runs the low-cost Claude Haiku 4.5)
 - FastMCP server exposing 7 tools over HTTP
 - DuckDB for the synthetic warehouse (~50k rows)
 - SQLite for run history and replay
