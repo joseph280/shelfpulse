@@ -1,27 +1,26 @@
-# Deploying ShelfPulse for free
+# Deploying ShelfPulse
 
-A fully public, **$0** demo: backend in one container on **Render** (free tier),
-frontend on **Vercel** (free tier), and a **free Gemini** key for the LLM so no
-request ever costs money.
+A public demo: backend in one container on **Render** (free tier), frontend on
+**Vercel** (free tier), using **Anthropic** (Claude Haiku) for the LLM. The
+service is protected by a password gate, so a public URL won't let strangers
+spend your API budget.
+
+Cost: hosting is free; only the Claude API calls cost money (Haiku is cheap —
+fractions of a cent per query).
 
 Trade-off you've accepted: the free backend **sleeps after ~15 min idle** and
 cold-starts in ~30–60s. Once warm it's responsive.
 
 ---
 
-## 0. One-time: get a Gemini API key
+## 0. One-time: get an Anthropic API key
 
-> A "Gemini Pro" consumer subscription is **not** an API key. You need an API
-> key from Google AI Studio (its free tier is plenty for this demo).
-
-1. Go to <https://aistudio.google.com/app/apikey> and sign in.
-2. **Create API key**. Copy it (starts with `AIza...`).
-
-That's the only credential you need.
+Create a key at <https://console.anthropic.com> → **API Keys** (starts with
+`sk-ant-...`). Also decide a gate password (default in examples: `shelfpulse`).
 
 ---
 
-## 1. Backend → Render (Docker, free)
+## 1. Backend → Render (Docker)
 
 The repo already has a `Dockerfile`, `start.sh`, and `render.yaml`. The image
 runs the MCP server (internal `127.0.0.1:8001`) and the FastAPI app together,
@@ -29,22 +28,24 @@ and bakes the synthetic DuckDB warehouse at build time.
 
 1. Push this repo to GitHub (see "Commit & push" below).
 2. In Render: **New → Blueprint**, pick this repo. Render reads `render.yaml`.
-3. Before the first deploy, set the two secret env vars (marked `sync: false`):
-   - `GOOGLE_API_KEY` = your `AIza...` key
+3. Before the first deploy, set the secret env vars (marked `sync: false`):
+   - `ANTHROPIC_API_KEY` = your `sk-ant-...` key
+   - `APP_PASSWORD` = the gate password (e.g. `shelfpulse`)
    - `ALLOWED_ORIGINS` = your Vercel URL (set after step 2; start with `*` if unsure)
 4. Deploy. When it's live you get a URL like `https://shelfpulse-api.onrender.com`.
 5. Sanity check: open `https://<your-render-url>/healthz` — you want
-   `"status":"ok"`, `"llm_provider":"google"`, `"llm_key":"GOOGLE_API_KEY present"`,
-   and a non-zero `warehouse_rows`.
+   `"status":"ok"`, `"llm_provider":"anthropic"`, `"llm_key":"ANTHROPIC_API_KEY present"`,
+   and a non-zero `warehouse_rows`. (`/healthz` is public; `/ask` requires the password.)
 
 The env vars baked in by `render.yaml`:
 
 | Var | Value | Why |
 |---|---|---|
-| `SHELFPULSE_PROVIDER` | `google` | Use the free Gemini tier instead of Anthropic |
-| `SHELFPULSE_MODEL` | `gemini-2.0-flash` | Gemini tool-calling model (bump to `gemini-2.5-pro` if desired) |
+| `SHELFPULSE_PROVIDER` | `anthropic` | LLM backend |
+| `SHELFPULSE_MODEL` | `claude-haiku-4-5` | Cheapest model with reliable structured output |
 | `PHOENIX_DISABLED` | `1` | Don't launch the local tracing UI in prod |
-| `GOOGLE_API_KEY` | *(secret)* | Your key |
+| `ANTHROPIC_API_KEY` | *(secret)* | Your key |
+| `APP_PASSWORD` | *(secret)* | Password required to use `/ask` |
 | `ALLOWED_ORIGINS` | *(your Vercel URL)* | CORS allowlist for the frontend |
 
 > Not using the Blueprint? Create a **Web Service → Docker**, same env vars,
