@@ -2,6 +2,14 @@
 
 A LangGraph-powered CPG sales-insight agent. Plain-English questions in, structured KPI snapshots, evidence-cited insights, and ranked action plans out. Built to demonstrate production-grade LLM engineering: typed I/O, structural hallucination prevention, observability, a real evaluation harness, and a Next.js chat frontend.
 
+## 🔗 Live demo
+
+**Try it:** https://shelfpulse-beta.vercel.app
+
+The app is password-protected to keep API costs in check. **Email me for the password:** [joseph.feener@gmail.com](mailto:joseph.feener@gmail.com)
+
+> _Note: the backend runs on a free tier that sleeps after ~15 min idle, so the first question may take 30–60 seconds to wake it up — subsequent ones are fast._
+
 ```mermaid
 flowchart TD
     A["POST /ask"] --> B[Guardrails]
