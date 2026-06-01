@@ -13,9 +13,29 @@ import type {
 
 const DEFAULT_API_BASE = "http://localhost:8000";
 const ASK_TIMEOUT_MS = 90_000; // 90 seconds for /ask, much shorter for the others
+const PW_STORAGE_KEY = "sp_pw";
 
 function apiBase(): string {
     return process.env.NEXT_PUBLIC_API_BASE ?? DEFAULT_API_BASE;
+}
+
+/** The password entered at the gate, persisted for this browser session. */
+function storedPassword(): string {
+    if (typeof window === "undefined") return "";
+    return window.sessionStorage.getItem(PW_STORAGE_KEY) ?? "";
+}
+
+/**
+ * Validate a password against the backend gate (GET /verify).
+ * Returns true on 200, false on 401.
+ */
+export async function verifyPassword(password: string): Promise<boolean> {
+    const res = await fetch(`${apiBase()}/verify`, {
+        headers: { "X-App-Password": password },
+    });
+    if (res.ok) return true;
+    if (res.status === 401) return false;
+    throw new ApiError(`Verify failed (${res.status})`, res.status);
 }
 
 class ApiError extends Error {
@@ -37,7 +57,10 @@ export async function askShelfPulse(req: AskRequest): Promise<AskResult> {
     try {
         const res = await fetch(`${apiBase()}/ask`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "X-App-Password": storedPassword(),
+            },
             body: JSON.stringify(req),
             signal: controller.signal,
         });

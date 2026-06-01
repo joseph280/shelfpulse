@@ -10,12 +10,14 @@ services:
     healthCheckPath: /healthz
     envVars:
       - key: SHELFPULSE_PROVIDER
-        value: google
+        value: anthropic
       - key: SHELFPULSE_MODEL
-        value: gemini-2.0-flash   # bump to gemini-2.5-pro if you want, slower/tighter free limits
+        value: claude-haiku-4-5   # cheapest model with reliable structured output
       - key: PHOENIX_DISABLED
         value: "1"
-      - key: GOOGLE_API_KEY
-        sync: false        # get one at aistudio.google.com; never commit the key
+      - key: ANTHROPIC_API_KEY
+        sync: false        # set in dashboard; never commit the key
+      - key: APP_PASSWORD
+        sync: false        # the gate password (e.g. shelfpulse)
       - key: ALLOWED_ORIGINS
         sync: false        # set to your Vercel domain, e.g. https://shelfpulse.vercel.app

@@ -14,7 +14,7 @@ from typing import Union
 from fastapi.middleware.cors import CORSMiddleware
 
 import duckdb
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import JSONResponse
 
 from agent.graph import build_graph
@@ -26,6 +26,16 @@ from mcp_server.config import settings
 
 
 log = logging.getLogger("shelfpulse.api")
+
+# Shared password gate. The frontend is public, so the password is enforced
+# server-side here (not just in the browser) to protect paid LLM calls.
+APP_PASSWORD = os.getenv("APP_PASSWORD", "shelfpulse")
+
+
+def require_password(x_app_password: str | None = Header(default=None)) -> None:
+    """FastAPI dependency: reject requests without the correct X-App-Password header."""
+    if x_app_password != APP_PASSWORD:
+        raise HTTPException(status_code=401, detail="Invalid or missing password.")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -50,17 +60,16 @@ app = FastAPI(
 # can be allowed without a code change. Comma-separated list, or "*" for any.
 # Defaults to the local Next.js dev server.
 _origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").strip()
-if _origins_env == "*":
-    _allow_origins = ["*"]
-    _allow_credentials = False  # "*" + credentials is rejected by browsers
-else:
-    _allow_origins = [o.strip() for o in _origins_env.split(",") if o.strip()]
-    _allow_credentials = True
+_allow_origins = ["*"] if _origins_env == "*" else [
+    o.strip() for o in _origins_env.split(",") if o.strip()
+]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_allow_origins,
-    allow_credentials=_allow_credentials,
+    # No cookies are used; auth travels in the X-App-Password header. Keeping
+    # credentials off lets us safely allow any origin/header for this demo.
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"]
 )
@@ -98,8 +107,16 @@ def healthz() -> dict:
     return status
 
 
+@app.get("/verify")
+def verify(_: None = Depends(require_password)) -> dict:
+    """Password check for the frontend gate. 200 if correct, 401 otherwise."""
+    return {"ok": True}
+
+
 @app.post("/ask", response_model=None)
-async def ask(req: AskRequest) -> Union[AskResponse, RefusalResponse]:
+async def ask(
+    req: AskRequest, _: None = Depends(require_password)
+) -> Union[AskResponse, RefusalResponse]:
     """Run the agent on a user question. Returns either a full answer or a refusal."""
     refusal = check_input(req.question)
     if refusal is not None:
