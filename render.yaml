@@ -1,0 +1,21 @@
+# Render Blueprint — free single-container deploy of the ShelfPulse backend.
+# In Render: New > Blueprint > point at this repo. Then set GOOGLE_API_KEY and
+# ALLOWED_ORIGINS (your Vercel URL) in the dashboard.
+services:
+  - type: web
+    name: shelfpulse-api
+    runtime: docker
+    plan: free            # sleeps after ~15 min idle; cold start ~30-60s
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    envVars:
+      - key: SHELFPULSE_PROVIDER
+        value: google
+      - key: SHELFPULSE_MODEL
+        value: gemini-2.0-flash   # bump to gemini-2.5-pro if you want, slower/tighter free limits
+      - key: PHOENIX_DISABLED
+        value: "1"
+      - key: GOOGLE_API_KEY
+        sync: false        # get one at aistudio.google.com; never commit the key
+      - key: ALLOWED_ORIGINS
+        sync: false        # set to your Vercel domain, e.g. https://shelfpulse.vercel.app
