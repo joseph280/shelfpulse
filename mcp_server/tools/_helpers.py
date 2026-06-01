@@ -37,7 +37,6 @@ def build_where(
     if filter.category:
         conditions.append("p.category = ?")
         params.append(filter.category)
-        params.append(filter.product_id)
     if filter.subcategory:
         conditions.append("p.subcategory = ?")
         params.append(filter.subcategory)

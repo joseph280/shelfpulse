@@ -46,25 +46,44 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Origins are env-driven so the deployed frontend (e.g. a *.vercel.app domain)
+# can be allowed without a code change. Comma-separated list, or "*" for any.
+# Defaults to the local Next.js dev server.
+_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").strip()
+if _origins_env == "*":
+    _allow_origins = ["*"]
+    _allow_credentials = False  # "*" + credentials is rejected by browsers
+else:
+    _allow_origins = [o.strip() for o in _origins_env.split(",") if o.strip()]
+    _allow_credentials = True
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
+    allow_origins=_allow_origins,
+    allow_credentials=_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"]
 )
 
 @app.get("/healthz")
 def healthz() -> dict:
-    """Liveness probe. Checks DuckDB readability and ANTHROPIC_API_KEY presence."""
+    """Liveness probe. Checks DuckDB readability and the LLM key for the
+    configured provider (anthropic / groq / google)."""
     status: dict[str, str] = {"status": "ok"}
 
-    # Anthropic key
-    if not os.getenv("ANTHROPIC_API_KEY"):
+    # LLM key for whichever provider is active.
+    provider = os.getenv("SHELFPULSE_PROVIDER", "anthropic").lower()
+    key_var = {
+        "anthropic": "ANTHROPIC_API_KEY",
+        "groq": "GROQ_API_KEY",
+        "google": "GOOGLE_API_KEY",
+    }.get(provider, "ANTHROPIC_API_KEY")
+    status["llm_provider"] = provider
+    if not os.getenv(key_var):
         status["status"] = "degraded"
-        status["anthropic_key"] = "missing"
+        status["llm_key"] = f"{key_var} missing"
     else:
-        status["anthropic_key"] = "present"
+        status["llm_key"] = f"{key_var} present"
 
     # DuckDB
     try:

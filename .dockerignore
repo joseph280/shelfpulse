@@ -1,0 +1,26 @@
+# Keep the build context small and avoid leaking local state into the image.
+.git
+.venv
+.env
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.phoenix
+__pycache__
+**/__pycache__
+*.pyc
+
+# Frontend is deployed separately (Vercel); not needed in the backend image.
+frontend
+
+# Local data artifacts are rebuilt by data/seed.py inside the image.
+warehouse/*.duckdb
+warehouse/*.duckdb.wal
+warehouse/*.sqlite
+warehouse/*.sqlite-journal
+
+# Docs / misc
+docs
+eval
+.DS_Store
+**/.DS_Store
