@@ -134,6 +134,9 @@ class AskResponse(BaseModel):
     insight: Insight
     action_plan: ActionPlan
     low_confidence: bool = False
+    # Real OpenTelemetry trace ID (32-char hex) for deep-linking into Phoenix.
+    # None when tracing is disabled.
+    phoenix_trace_id: str | None = None
 
 
 class RefusalResponse(BaseModel):
@@ -144,6 +147,7 @@ class RefusalResponse(BaseModel):
     trace_id: str
     reason: Literal["out_of_scope", "harmful", "pii", "oversized_input"]
     message: str = Field(min_length=10, max_length=400)
+    phoenix_trace_id: str | None = None
 
 
 __all__ = [

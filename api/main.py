@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse
 
 from agent.graph import build_graph
 from agent.guardrails import check_input
-from agent.observability import setup_phoenix
+from agent.observability import current_trace_id, setup_phoenix
 from api.schemas import AskRequest, AskResponse, RefusalResponse
 from api.storage import get_action_plan, get_insight
 from mcp_server.config import settings
@@ -121,9 +121,20 @@ async def ask(
     refusal = check_input(req.question)
     if refusal is not None:
         return refusal
-    
+
     graph = app.state.graph
-    result = await graph.ainvoke({"question": req.question})
+
+    # Run the graph inside a single OTEL span so every downstream LLM/tool span
+    # shares one trace, and capture that trace ID for deep-linking into Phoenix.
+    try:
+        from opentelemetry import trace as otel_trace
+
+        with otel_trace.get_tracer("shelfpulse.api").start_as_current_span("ask"):
+            result = await graph.ainvoke({"question": req.question})
+            phoenix_trace_id = current_trace_id()
+    except ImportError:
+        result = await graph.ainvoke({"question": req.question})
+        phoenix_trace_id = None
 
     decision = result.get("router_decision")
     trace_id = result.get("trace_id", "unknown")
@@ -138,8 +149,9 @@ async def ask(
                 if decision and decision.refusal_message
                 else "Question is outside the ShelfPulse scope."
             ),
+            phoenix_trace_id=phoenix_trace_id,
         )
-    
+
     insight = result.get("insight")
     action_plan = result.get("action_plan")
     if insight is None or action_plan is None:
@@ -147,12 +159,13 @@ async def ask(
             status_code=500,
             detail=f"Agent finished without producing an insight or action plan (trace_id={trace_id})."
         )
-    
+
     return AskResponse(
         trace_id=trace_id,
         insight=insight,
         action_plan=action_plan,
         low_confidence=bool(result.get("low_confidence", False)),
+        phoenix_trace_id=phoenix_trace_id,
     )
 
 
